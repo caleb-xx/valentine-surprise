@@ -40,14 +40,23 @@ button:active { transform: scale(0.92); }
 }
 .screen.active { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
 
+/* Valentine screen: keep buttons movable and not vertically centered */
+.valentine-screen {
+  justify-content: flex-start; /* move content from top instead of center */
+  align-items: center;         /* horizontal center stays */
+  padding-top: clamp(60px, 15vh, 100px); /* space from top */
+}
+
 /* Card Game */
 .card-grid { 
-  display:grid; 
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: clamp(8px,1.5vw,20px); 
-  justify-content:center; 
-  margin-top: clamp(15px,3vw,40px); 
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  /* 2 columns */
+  grid-template-rows: repeat(2, auto);    /* 3 rows */
+  gap: clamp(12px, 2vw, 20px);
+  width: min(90vw, 400px);
+  margin-top: clamp(15px,3vw,40px);
 }
+
 .card { width:100%; aspect-ratio:1; perspective:1000px; }
 .card-inner { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition: transform 0.7s cubic-bezier(.68,-0.55,.27,1.55); }
 .card.flipped .card-inner { transform: rotateY(180deg); }
@@ -99,14 +108,27 @@ button:active { transform: scale(0.92); }
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 30px; /* THIS adds space between buttons */
+  gap: 30px; /* space between buttons */
 }
 
-#noBtn { position:absolute; background:#ccc; }
+/* YES button: start slightly left */
 #yesBtn {
   animation: pulse 1.6s infinite;
-  transform-origin: center; /* scale from center */
+  transform-origin: center;
+  position: relative;      /* relative to .buttons container */
+  left: -20px;             /* shift left */
+  z-index: 10;
 }
+
+/* NO button: start slightly right, then JS moves it */
+#noBtn {
+  position: absolute;      /* allows JS to move it around */
+  background: #6d4e475c;
+  left: calc(50% + 40px); /* start a bit right of center */
+  z-index: 5;
+  white-space: nowrap; /* prevents text from wrapping */
+}
+
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.08); }
@@ -166,13 +188,14 @@ button:active { transform: scale(0.92); }
   inset: 0;
   background: rgba(255, 214, 232, 0.95);
   backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+
+  overflow-y: auto;           /* ✅ allow scrolling */
+  padding: 60px 20px;         /* ✅ give space */
+
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.8s ease, transform 0.8s ease;
+
   z-index: 9999;
 }
 
@@ -182,6 +205,9 @@ button:active { transform: scale(0.92); }
 }
 
 .final-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
   animation: floatIn 1.2s ease forwards;
 }
 
@@ -205,9 +231,26 @@ button:active { transform: scale(0.92); }
   100% { text-shadow: 0 0 20px #ff4d88; }
 }
 
+/* LETTER STYLING */
+#typedLetter {
+  font-family: 'Minecraft', sans-serif;
+  font-size: clamp(14px, 2vw, 20px);
+  max-width: 800px;
+  margin: 30px auto 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  text-align: left;   /* ✅ LEFT ALIGN */
+  color: #5a2a5f;
+}
 
+.sparkle-heart {
+  position: fixed;
+  font-size: 20px;
+  pointer-events: none;
+  animation: sparkleFloat 1.5s ease-out forwards;
+}
 
-
-
-
-
+@keyframes sparkleFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(1.6); }
+}
